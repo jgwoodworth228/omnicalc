@@ -13,13 +13,14 @@ class CalculationsController < ApplicationController
         # The special word the user input is in the string @special_word.
         # ========================================================
 
-        @word_count = "Replace this string with your answer"
+        @word_count = @text.split.count
 
-        @character_count_with_spaces = "Replace this string with your answer"
+        @character_count_with_spaces = @text.length
 
-        @character_count_without_spaces = "Replace this string with your answer"
+        @character_count_without_spaces = @text.gsub(" ","").length
 
-        @occurrences = "Replace this string with your answer"
+        @occurrences = @text.downcase.split.count(@special_word.downcase)
+
         render 'word_count'
     end
 
@@ -42,7 +43,7 @@ class CalculationsController < ApplicationController
         rate_per_period = @apr / 100 / 12
         number_periods = @years * 12
 
-        @monthly_payment = "Replace this string with your answer"
+        @monthly_payment = ((rate_per_period)*(present_value))/(1-((1+rate_per_period))**-number_periods)
     end
 
     def time_between_form
@@ -78,30 +79,70 @@ class CalculationsController < ApplicationController
     def descriptive_statistics
         @numbers = params[:list_of_numbers].gsub(',', '').split.map(&:to_f)
 
+
         # =====================================================
         # Your code goes below.
         # The numbers the user input are in the array @numbers.
         # =====================================================
 
-        @sorted_numbers = "Replace this string with your answer"
+        @sorted_numbers = @numbers.sort
 
-        @count = "Replace this string with your answer"
+        @count = @numbers.count
 
-        @minimum = "Replace this string with your answer"
+        @minimum = @numbers.min
 
-        @maximum = "Replace this string with your answer"
+        @maximum = @numbers.max
 
-        @range = "Replace this string with your answer"
+        @range = @maximum - @minimum
 
-        @median = "Replace this string with your answer"
+        @median = (@numbers.sort[(@numbers.sort.length - 1) / 2] + (@numbers.sort.length/2) / 2.0)
 
-        @sum = "Replace this string with your answer"
+        # @sum = @numbers.sum  one option
 
-        @mean = "Replace this string with your answer"
+        # another option for sum
+            @sum=0
+            @numbers.each do |num|
+                @sum=@sum+num
+            end
 
-        @variance = "Replace this string with your answer"
+        @mean=@sum/@count
 
-        @standard_deviation = "Replace this string with your answer"
+
+        #way to calculate mean
+        #def mean(array)
+        #     array.inject(0) { |sum, x| sum += x } / array.size.to_f
+        #end
+        #
+        # def variance(array)
+        #    m = mean(array)
+        #     variance = array.inject(0) { |variance, x| variance += (x - m) ** 2 }
+        #     return variance
+        # end
+        #
+        # def standard_deviation(array)
+        #     v = variance(array)
+        #     return Math.sqrt(v/(array.size))
+        #end
+
+
+
+       # @variance = variance(@numbers)
+       squared_differences=[]
+        @numbers.each do |num|
+            squared_differences << (num-@mean)**2
+        end
+
+        @variance=0
+            squared_differences.each do |num|
+                @variance=@variance+num
+            end
+        @variance=@variance/@count
+
+
+       # @standard_deviation = standard_deviation(@numbers)
+         @standard_deviation=Math.sqrt(@variance)
+
+       # @mode = mode(@numbers)
 
         render  'descriptive_statistics'
     end
